@@ -20,5 +20,5 @@ Qt 5
  * qmake
  * make -f Makefile.Release
 
-![](https://github.com/phoemur/minesweeper/screenshot.png)
+![](screenshot.png)
     
