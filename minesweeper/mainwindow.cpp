@@ -407,16 +407,14 @@ void Minesweeper::break_after_end()
     }
 }
 
-void Minesweeper::update_statusbar()
+inline void Minesweeper::update_statusbar()
 {
     QString msg = "Mines: " + QString::number(num_flags) + " / " + QString::number(mines) + "   ";
-    //this->statusBar()->showMessage(msg);
     lab.setText(msg);
 }
 
 void Minesweeper::reset()
 {
-    static QIcon empty;
     num_flags = 0;
     nodes = {};
     create_nodes(size_x, size_y);
