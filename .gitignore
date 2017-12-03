@@ -30,3 +30,9 @@
 *.exe
 *.out
 *.app
+
+#Qt moc files
+moc*.*
+
+#Makefile
+Makefile
