@@ -1,5 +1,6 @@
 # minesweeper
 [![Build Status](https://travis-ci.org/phoemur/minesweeper.svg?branch=master)](https://travis-ci.org/phoemur/minesweeper)
+
 This is an implementation of Minesweeper written in C++ and Qt
 
 Author: Fernando B. Giannasi
