@@ -13,12 +13,8 @@ install:
   - sudo apt-get install -qq qt5-default qttools5-dev-tools qt5-qmake
   - sudo apt-get install -qq g++-7
   - sudo update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-7 90
-  # cppcheck
-  - sudo apt-get install -qq cppcheck
 
 script: 
   - cd ${TRAVIS_BUILD_DIR}/minesweeper
   - qmake minesweeper.pro
   - make
-  # cppcheck
-  - cppcheck *.cpp *.hpp --quiet --error-exitcode=1 .
