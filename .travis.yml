@@ -4,8 +4,8 @@ dist: trusty
 
 before_install:
   - cd ${TRAVIS_BUILD_DIR}
- - sudo add-apt-repository --yes ppa:ubuntu-sdk-team/ppa
- - sudo apt-get update -qq
+  - sudo add-apt-repository --yes ppa:ubuntu-sdk-team/ppa
+  - sudo apt-get update -qq
 
 install:
   - sudo apt-get install -qq qtbase5-dev qtdeclarative5-dev libqt5webkit5-dev libsqlite3-dev
