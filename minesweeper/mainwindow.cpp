@@ -85,8 +85,8 @@ Minesweeper::Minesweeper(unsigned sz_x,
     signalMapper = new QSignalMapper(widget);
     signalMapper2 = new QSignalMapper(widget);
     
-    for (size_t i=0; i<size_x; ++i) {
-        for (size_t j=0; j<size_y; ++j) {
+    for (std::size_t i=0; i<size_x; ++i) {
+        for (std::size_t j=0; j<size_y; ++j) {
             QRightClickButton *btn = new QRightClickButton(widget);
             btn->setAttribute(Qt::WA_LayoutUsesWidgetRect);
             grid->addWidget(btn, i, j);
@@ -344,8 +344,8 @@ void Minesweeper::breadth_first_open(int row, int col)
 
 void Minesweeper::open_all()
 {
-    for (size_t i=0; i<size_x; ++i) {
-        for (size_t j=0; j<size_y; ++j) {
+    for (std::size_t i=0; i<size_x; ++i) {
+        for (std::size_t j=0; j<size_y; ++j) {
             open_cell(i, j);
             nodes[i][j].is_open = true;
         }
@@ -371,8 +371,8 @@ bool Minesweeper::check_end() const noexcept
 { // end is when there is no cell without a mine to open
     unsigned counter = 0;
     
-    for (size_t i=0; i<size_x; ++i) {
-        for (size_t j=0; j<size_y; ++j) {
+    for (std::size_t i=0; i<size_x; ++i) {
+        for (std::size_t j=0; j<size_y; ++j) {
             if (nodes[i][j].is_open && !nodes[i][j].is_mine) {
                 counter++;
             }
@@ -387,8 +387,8 @@ void Minesweeper::break_after_end()
     static QIcon flag;
     flag.addPixmap(QPixmap("images/flag.png"), QIcon::Normal);
     
-    for (size_t i=0; i<size_x; ++i) {
-        for (size_t j=0; j<size_y; ++j) {
+    for (std::size_t i=0; i<size_x; ++i) {
+        for (std::size_t j=0; j<size_y; ++j) {
             if (!nodes[i][j].is_open) {
                 QString coordinates = QString::number(i)+","+QString::number(j);
                 QRightClickButton* buttonPushed = qobject_cast<QRightClickButton*>(signalMapper->mapping(coordinates));  
@@ -423,8 +423,8 @@ void Minesweeper::reset()
     insert_mines();
     fill_cells();
     
-    for (size_t i=0; i<size_x; ++i) {
-        for (size_t j=0; j<size_y; ++j) {
+    for (std::size_t i=0; i<size_x; ++i) {
+        for (std::size_t j=0; j<size_y; ++j) {
             QString coordinates = QString::number(i)+","+QString::number(j);
             QRightClickButton* buttonPushed = qobject_cast<QRightClickButton*>(signalMapper->mapping(coordinates));
             buttonPushed->setEnabled(true);
