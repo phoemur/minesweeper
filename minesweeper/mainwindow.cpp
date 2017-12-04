@@ -63,7 +63,8 @@ Minesweeper::Minesweeper(unsigned sz_x,
     connect(new_game, &QAction::triggered, this, &Minesweeper::reset);
     
     // Menu Help
-    QAction *sobre = new QAction("&About", widget);
+    QPixmap about_pix("images/about.png");
+    QAction *sobre = new QAction(about_pix, "&About", widget);
     sobre->setShortcut(tr("CTRL+H"));
     QMenu *ajuda;
     ajuda = menuBar()->addMenu("&Help");
@@ -214,9 +215,10 @@ void Minesweeper::create_nodes(unsigned x, unsigned y)
 
 void Minesweeper::insert_mines()
 { // insert n random mines in the matrix
-    int a, b, counter = 0;
+    int a, b;
+    unsigned counter = 0;
     
-    while (counter < static_cast<int>(mines)) {
+    while (counter < mines) {
         a = dist(engine) % size_x;
         b = dist(engine) % size_y;
         if (!nodes[a][b].is_mine) {

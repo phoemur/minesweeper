@@ -46,10 +46,10 @@ class Minesweeper : public QMainWindow {
     void break_after_end();
     void update_statusbar();
 public:
-    Minesweeper(unsigned sz_x, 
-                unsigned sz_y, 
-                unsigned mns, 
-                QWidget* parent = nullptr);
+    explicit Minesweeper(unsigned sz_x, 
+                         unsigned sz_y, 
+                         unsigned mns, 
+                         QWidget* parent = nullptr);
     Minesweeper() : Minesweeper(8, 8, 10) {};
     ~Minesweeper() noexcept;
     
