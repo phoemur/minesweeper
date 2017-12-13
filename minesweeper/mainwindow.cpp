@@ -30,6 +30,7 @@ Minesweeper::Minesweeper(unsigned sz_x,
       size_y{sz_y}, 
       mines{mns},
       num_flags{0},
+      open_so_far{0},
       engine(this->seeder()),
       dist(0, (size_x*size_y)),
       widget{new QWidget()},
@@ -319,7 +320,9 @@ void Minesweeper::breadth_first_open(int row, int col)
             for (int a=-1; a<=1; ++a) {
                 if (is_valid_coord(b+p.first, a+p.second)) {
                     if (!nodes[b+p.first][a+p.second].is_flag) {
-                        open_cell(b+p.first, a+p.second);
+                        if (!nodes[b+p.first][a+p.second].is_open) {
+                            open_cell(b+p.first, a+p.second);
+                        }
                     }
                     if (!visited[b+p.first][a+p.second] &&
                         nodes[b+p.first][a+p.second].val == 0) {
@@ -344,8 +347,10 @@ void Minesweeper::open_all()
 
 inline void Minesweeper::open_cell(int row, int col)
 {
-    QString coordinates = QString::number(row)+","+QString::number(col);
-    open_cell(coordinates, row, col);
+    if (!nodes[row][col].is_open){
+        QString coordinates = QString::number(row)+","+QString::number(col);
+        open_cell(coordinates, row, col);
+    }
 }
 
 inline void Minesweeper::open_cell(QString& coordinates, int row, int col)
@@ -355,21 +360,12 @@ inline void Minesweeper::open_cell(QString& coordinates, int row, int col)
     buttonPushed->setDown(true);
     put_icon(buttonPushed, row, col);
     nodes[row][col].is_open = true;
+    open_so_far++;
 }
 
 bool Minesweeper::check_end() const noexcept
-{ // end is when there is no cell without a mine to open
-    unsigned counter = 0;
-    
-    for (std::size_t i=0; i<size_x; ++i) {
-        for (std::size_t j=0; j<size_y; ++j) {
-            if (nodes[i][j].is_open && !nodes[i][j].is_mine) {
-                counter++;
-            }
-        }
-    }
-    
-    return counter >= (size_x*size_y)-mines ? true: false;
+{ // end is when there is no cell without a mine to open    
+    return open_so_far >= (size_x*size_y)-mines ? true: false;
 }
 
 void Minesweeper::break_after_end()
@@ -406,6 +402,7 @@ inline void Minesweeper::update_statusbar()
 void Minesweeper::reset()
 {
     num_flags = 0;
+    open_so_far = 0;
     nodes = {};
     create_nodes(size_x, size_y);
     insert_mines();

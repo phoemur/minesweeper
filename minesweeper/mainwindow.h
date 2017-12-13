@@ -22,6 +22,7 @@ class Minesweeper : public QMainWindow {
     unsigned size_y;
     unsigned mines;
     unsigned num_flags;
+    unsigned open_so_far;
     
     std::random_device seeder {};
     std::mt19937 engine;
