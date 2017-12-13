@@ -6,6 +6,8 @@
 #include <QSignalMapper>
 #include <QString>
 #include <QLabel>
+#include <QGridLayout>
+#include <QVector>
 #include <vector>
 #include <random>
 #include "qrightclickbutton.h"
@@ -26,9 +28,11 @@ class Minesweeper : public QMainWindow {
     std::uniform_int_distribution<int> dist;
     
     QWidget *widget;
-    QSignalMapper *signalMapper;
-    QSignalMapper *signalMapper2;
+    QSignalMapper *signalMapper = nullptr;
+    QSignalMapper *signalMapper2 = nullptr;
     QLabel lab {QString("")};
+    QGridLayout *grid = nullptr;
+    QVector<QRightClickButton *> btn_storage;
     
     std::vector<std::vector<Cell>> nodes; //representation of the minefield
     
@@ -37,6 +41,10 @@ class Minesweeper : public QMainWindow {
     void insert_mines();
     bool is_valid_coord(int a, int b) const noexcept;
     void fill_cells();
+    void create_buttons();
+    void set_beginner();
+    void set_intermediate();
+    void set_expert();
     void put_icon(QRightClickButton* btn, int row, int cow);
     void breadth_first_open(int row, int col);
     void open_all();

@@ -2,7 +2,6 @@
 #include "qrightclickbutton.h"
 
 #include <QApplication>
-#include <QGridLayout>
 #include <QPushButton>
 #include <QMenu>
 #include <QMenuBar>
@@ -52,15 +51,28 @@ Minesweeper::Minesweeper(unsigned sz_x,
     QPixmap new_pix("images/new.gif");
     QAction *quit = new QAction(quit_pix, "&Quit", widget);
     QAction *new_game = new QAction(new_pix, "&New game", widget);
+    QAction *beginner = new QAction("&Beginner", widget);
+    QAction *intermediate = new QAction("&Intermediate", widget);
+    QAction *expert = new QAction("&Expert", widget);
     quit->setShortcut(tr("CTRL+Q"));
     new_game->setShortcut(tr("CTRL+N"));
+    beginner->setShortcut(tr("CTRL+B"));
+    intermediate->setShortcut(tr("CTRL+I"));
+    expert->setShortcut(tr("CTRL+E"));
     QMenu *file;
     file = menuBar()->addMenu("&File");
     file->addAction(new_game);
     file->addSeparator();
+    file->addAction(beginner);
+    file->addAction(intermediate);
+    file->addAction(expert);
+    file->addSeparator();
     file->addAction(quit);
     connect(quit, &QAction::triggered, qApp, QApplication::quit);
     connect(new_game, &QAction::triggered, this, &Minesweeper::reset);
+    connect(beginner, &QAction::triggered, this, &Minesweeper::set_beginner);
+    connect(intermediate, &QAction::triggered, this, &Minesweeper::set_intermediate);
+    connect(expert, &QAction::triggered, this, &Minesweeper::set_expert);
     
     // Menu Help
     QPixmap about_pix("images/about.png");
@@ -75,36 +87,12 @@ Minesweeper::Minesweeper(unsigned sz_x,
     
     
     // Layout
-    QGridLayout *grid = new QGridLayout(widget);
+    grid = new QGridLayout(widget);
     grid->setHorizontalSpacing(1);
     grid->setVerticalSpacing(1);
     
-    
     // Buttons
-    
-    //We will need to map the click to an object's coordinates
-    signalMapper = new QSignalMapper(widget);
-    signalMapper2 = new QSignalMapper(widget);
-    
-    for (std::size_t i=0; i<size_x; ++i) {
-        for (std::size_t j=0; j<size_y; ++j) {
-            QRightClickButton *btn = new QRightClickButton(widget);
-            btn->setAttribute(Qt::WA_LayoutUsesWidgetRect);
-            grid->addWidget(btn, i, j);
-            QString coordinates = QString::number(i)+","+QString::number(j); //Coordinate of the button
-            //Map the coordinates to a particular MineSweeperButton
-            signalMapper->setMapping(btn, coordinates);
-            signalMapper2->setMapping(btn, coordinates);
-            
-            //Connections for the buttons
-            connect(btn, SIGNAL(leftClicked()), signalMapper, SLOT(map()));
-            connect(btn, SIGNAL(rightClicked()), signalMapper2, SLOT(map()));
-        }
-    }
-    
-    //Connect the signal mapper to this class so that we can handle its clicks
-    connect(signalMapper, SIGNAL(mapped(QString)), this, SLOT(revealCell(QString))); //Left click
-    connect(signalMapper2, SIGNAL(mapped(QString)), this, SLOT(hasRightClicked(QString))); //Right click
+    create_buttons();
     
     // Window style
     QString styleSheet =
@@ -433,6 +421,85 @@ void Minesweeper::reset()
         }
     }
     update_statusbar();
+}
+
+void Minesweeper::create_buttons()
+{
+    if (signalMapper != nullptr) {
+        delete signalMapper;
+    }
+    if (signalMapper2 != nullptr) {
+        delete signalMapper2;
+    }
+    signalMapper = new QSignalMapper(widget);
+    signalMapper2 = new QSignalMapper(widget);
+    
+    for (std::size_t i=0; i<size_x; ++i) {
+        for (std::size_t j=0; j<size_y; ++j) {
+            QRightClickButton *btn = new QRightClickButton(widget);
+            btn->setAttribute(Qt::WA_LayoutUsesWidgetRect);
+            grid->addWidget(btn, i, j);
+            QString coordinates = QString::number(i)+","+QString::number(j); //Coordinate of the button
+            //Map the coordinates to a particular MineSweeperButton
+            signalMapper->setMapping(btn, coordinates);
+            signalMapper2->setMapping(btn, coordinates);
+            
+            //Connections for the buttons
+            connect(btn, SIGNAL(leftClicked()), signalMapper, SLOT(map()));
+            connect(btn, SIGNAL(rightClicked()), signalMapper2, SLOT(map()));
+            
+            btn_storage.push_back(btn);
+        }
+    }
+    
+    //Connect the signal mapper to this class so that we can handle its clicks
+    connect(signalMapper, SIGNAL(mapped(QString)), this, SLOT(revealCell(QString))); //Left click
+    connect(signalMapper2, SIGNAL(mapped(QString)), this, SLOT(hasRightClicked(QString))); //Right click
+}
+
+void Minesweeper::set_beginner()
+{
+    size_x = 8;
+    size_y = 8;
+    mines = 10;
+    
+    for (auto& b: btn_storage) {
+        delete b;
+    }
+    btn_storage.clear();
+    
+    create_buttons();
+    reset();
+}
+
+void Minesweeper::set_intermediate()
+{
+    size_x = 16;
+    size_y = 16;
+    mines = 40;
+    
+    for (auto& b: btn_storage) {
+        delete b;
+    }
+    btn_storage.clear();
+    
+    create_buttons();
+    reset();
+}
+
+void Minesweeper::set_expert()
+{
+    size_x = 16;
+    size_y = 30;
+    mines = 99;
+    
+    for (auto& b: btn_storage) {
+        delete b;
+    }
+    btn_storage.clear();
+    
+    create_buttons();
+    reset();
 }
 
 void Minesweeper::about() noexcept
