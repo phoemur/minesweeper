@@ -8,6 +8,7 @@
 #include <QLabel>
 #include <QGridLayout>
 #include <QVector>
+#include <QTimer>
 #include <vector>
 #include <random>
 #include "qrightclickbutton.h"
@@ -23,6 +24,7 @@ class Minesweeper : public QMainWindow {
     unsigned mines;
     unsigned num_flags;
     unsigned open_so_far;
+    double elapsed_time;
     
     std::random_device seeder {};
     std::mt19937 engine;
@@ -35,6 +37,8 @@ class Minesweeper : public QMainWindow {
     QGridLayout *grid = nullptr;
     QVector<QRightClickButton *> btn_storage;
     
+     QTimer *timer = nullptr;
+    
     std::vector<std::vector<Cell>> nodes; //representation of the minefield
     
     // helper functions
@@ -43,9 +47,7 @@ class Minesweeper : public QMainWindow {
     bool is_valid_coord(int a, int b) const noexcept;
     void fill_cells();
     void create_buttons();
-    void set_beginner();
-    void set_intermediate();
-    void set_expert();
+    
     void put_icon(QRightClickButton* btn, int row, int cow);
     void breadth_first_open(int row, int col);
     void open_all();
@@ -67,6 +69,10 @@ private slots:
     void revealCell(QString);
     void reset();
     void about() noexcept;
+    void update_clock();
+    void set_beginner();
+    void set_intermediate();
+    void set_expert();
 };
 
 

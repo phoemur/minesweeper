@@ -31,6 +31,7 @@ Minesweeper::Minesweeper(unsigned sz_x,
       mines{mns},
       num_flags{0},
       open_so_far{0},
+      elapsed_time{0.0},
       engine(this->seeder()),
       dist(0, (size_x*size_y)),
       widget{new QWidget()},
@@ -121,6 +122,10 @@ Minesweeper::Minesweeper(unsigned sz_x,
     QIcon icon (QPixmap("images/mine.png"));
     this->setWindowIcon(icon);
     update_statusbar();
+    
+    //timer
+    timer = new QTimer(widget);
+    connect(timer, SIGNAL(timeout()), this, SLOT(update_clock()));
 }
 
 
@@ -132,6 +137,12 @@ Minesweeper::~Minesweeper() noexcept
 void Minesweeper::hasRightClicked(QString coordinates)
 {
     //qDebug() << "Right clicked: " << coordinates << "\n";
+    
+    // start timer if not active
+    if (!timer->isActive()) {
+        timer->start(1000);
+    }
+    
     
     static QIcon flag, empty;
     flag.addPixmap(QPixmap("images/flag.png"), QIcon::Normal);
@@ -165,6 +176,11 @@ void Minesweeper::revealCell(QString coordinates)
 {
     //qDebug() << "Left clicked: " << coordinates << "\n";
     
+    // start timer if not active
+    if (!timer->isActive()) {
+        timer->start(1000);
+    }
+    
     // Obtain its coordinates
     QStringList results = coordinates.split(",");
     if ( results.size() != 2) { //Ensure that we receive two coordinates
@@ -176,7 +192,9 @@ void Minesweeper::revealCell(QString coordinates)
     if (nodes[row][col].is_flag) {return;}
     else if (nodes[row][col].is_mine) {
         open_all();
-        QMessageBox::warning(this, "Ouch!", "SORRY, YOU LOST!!!");
+        QString msg = "SORRY, YOU LOST!!!\nElapsed: " + QString::number(elapsed_time) +"s";
+        timer->stop();
+        QMessageBox::warning(this, "Ouch!", msg);
         return;
     }
     
@@ -188,7 +206,9 @@ void Minesweeper::revealCell(QString coordinates)
     
     if (check_end()) {
         break_after_end();
-        QMessageBox::information(this, "Congratulations", "CONGRATULATIONS, YOU WIN!!");
+        QString msg = "CONGRATULATIONS, YOU WIN!!\nScore: "+ QString::number(elapsed_time) +"s";
+        timer->stop();
+        QMessageBox::information(this, "Congratulations", msg);
     }
 }
 
@@ -417,6 +437,14 @@ void Minesweeper::reset()
             buttonPushed->setIcon(QIcon());
         }
     }
+    
+    // reset timer also
+    if (timer != nullptr) {
+        delete timer;
+        timer = new QTimer(widget);
+        connect(timer, SIGNAL(timeout()), this, SLOT(update_clock()));
+    }
+    elapsed_time = 0.0;
     update_statusbar();
 }
 
@@ -503,4 +531,10 @@ void Minesweeper::about() noexcept
 {
     QMessageBox::information(this, "About",
       "Minesweeper version 0.1\nAuthor: Fernando B. Giannasi\nNov/2017");
+}
+
+void Minesweeper::update_clock()
+{
+    elapsed_time += (double)timer->interval() / 1000;
+    statusBar()->showMessage("   "+QString::number(elapsed_time)+"s", 2000);
 }
