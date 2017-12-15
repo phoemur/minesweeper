@@ -12,6 +12,7 @@
 #include <vector>
 #include <random>
 #include "qrightclickbutton.h"
+#include "highscore.h"
 
 struct Cell;
 
@@ -37,7 +38,7 @@ class Minesweeper : public QMainWindow {
     QGridLayout *grid = nullptr;
     QVector<QRightClickButton *> btn_storage;
     
-     QTimer *timer = nullptr;
+    QTimer *timer = nullptr;
     
     std::vector<std::vector<Cell>> nodes; //representation of the minefield
     
@@ -47,7 +48,6 @@ class Minesweeper : public QMainWindow {
     bool is_valid_coord(int a, int b) const noexcept;
     void fill_cells();
     void create_buttons();
-    
     void put_icon(QRightClickButton* btn, int row, int cow);
     void breadth_first_open(int row, int col);
     void open_all();
@@ -56,6 +56,7 @@ class Minesweeper : public QMainWindow {
     bool check_end() const noexcept;
     void break_after_end();
     void update_statusbar();
+    
 public:
     explicit Minesweeper(unsigned sz_x, 
                          unsigned sz_y, 
@@ -73,6 +74,7 @@ private slots:
     void set_beginner();
     void set_intermediate();
     void set_expert();
+    void show_highscore();
 };
 
 

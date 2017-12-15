@@ -56,11 +56,13 @@ Minesweeper::Minesweeper(unsigned sz_x,
     QAction *beginner = new QAction("&Beginner", widget);
     QAction *intermediate = new QAction("&Intermediate", widget);
     QAction *expert = new QAction("&Expert", widget);
+    QAction *highscore = new QAction("&Highscores", widget);
     quit->setShortcut(tr("CTRL+Q"));
     new_game->setShortcut(tr("CTRL+N"));
     beginner->setShortcut(tr("CTRL+B"));
     intermediate->setShortcut(tr("CTRL+I"));
     expert->setShortcut(tr("CTRL+E"));
+    
     QMenu *file;
     file = menuBar()->addMenu("&File");
     file->addAction(new_game);
@@ -69,12 +71,15 @@ Minesweeper::Minesweeper(unsigned sz_x,
     file->addAction(intermediate);
     file->addAction(expert);
     file->addSeparator();
+    file->addAction(highscore);
+    file->addSeparator();
     file->addAction(quit);
     connect(quit, &QAction::triggered, qApp, QApplication::quit);
     connect(new_game, &QAction::triggered, this, &Minesweeper::reset);
     connect(beginner, &QAction::triggered, this, &Minesweeper::set_beginner);
     connect(intermediate, &QAction::triggered, this, &Minesweeper::set_intermediate);
     connect(expert, &QAction::triggered, this, &Minesweeper::set_expert);
+    connect(highscore, &QAction::triggered, this, &Minesweeper::show_highscore);
     
     // Menu Help
     QPixmap about_pix("images/about.png");
@@ -537,4 +542,10 @@ void Minesweeper::update_clock()
 {
     elapsed_time += (double)timer->interval() / 1000;
     statusBar()->showMessage("   "+QString::number(elapsed_time)+"s", 2000);
+}
+
+void Minesweeper::show_highscore()
+{
+    auto h = new Highscore(this);
+    h->show();
 }
