@@ -36,3 +36,6 @@ moc*.*
 
 #Makefile
 Makefile
+
+#CSV files
+*.csv

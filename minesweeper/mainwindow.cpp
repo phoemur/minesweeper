@@ -32,6 +32,7 @@ Minesweeper::Minesweeper(unsigned sz_x,
       num_flags{0},
       open_so_far{0},
       elapsed_time{0.0},
+      current_level{0},
       engine(this->seeder()),
       dist(0, (size_x*size_y)),
       widget{new QWidget()},
@@ -492,6 +493,7 @@ void Minesweeper::set_beginner()
     size_x = 8;
     size_y = 8;
     mines = 10;
+    current_level = 0;
     
     for (auto& b: btn_storage) {
         delete b;
@@ -507,6 +509,7 @@ void Minesweeper::set_intermediate()
     size_x = 16;
     size_y = 16;
     mines = 40;
+    current_level = 3;
     
     for (auto& b: btn_storage) {
         delete b;
@@ -522,6 +525,7 @@ void Minesweeper::set_expert()
     size_x = 16;
     size_y = 30;
     mines = 99;
+    current_level = 6;
     
     for (auto& b: btn_storage) {
         delete b;

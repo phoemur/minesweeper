@@ -26,6 +26,7 @@ class Minesweeper : public QMainWindow {
     unsigned num_flags;
     unsigned open_so_far;
     double elapsed_time;
+    int current_level;
     
     std::random_device seeder {};
     std::mt19937 engine;
@@ -57,11 +58,13 @@ class Minesweeper : public QMainWindow {
     void break_after_end();
     void update_statusbar();
     
-public:
+    
     explicit Minesweeper(unsigned sz_x, 
                          unsigned sz_y, 
                          unsigned mns, 
                          QWidget* parent = nullptr);
+public:
+    
     Minesweeper() : Minesweeper(8, 8, 10) {};
     ~Minesweeper() noexcept;
     
