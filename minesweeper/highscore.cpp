@@ -22,8 +22,6 @@ Highscore::Highscore(QWidget* parent)
     close->setGeometry(QRect(140, 320, 93, 27));
     close->setText("Close");
     connect(close, SIGNAL(clicked()), this, SLOT(close()));
-    
-    parse_file();
 }
 
 inline bool Highscore::file_exists(const std::string& name)
