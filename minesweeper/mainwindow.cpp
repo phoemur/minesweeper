@@ -215,6 +215,8 @@ void Minesweeper::revealCell(QString coordinates)
         QString msg = "CONGRATULATIONS, YOU WIN!!\nScore: "+ QString::number(elapsed_time) +"s";
         timer->stop();
         QMessageBox::information(this, "Congratulations", msg);
+        
+        new SaveHighscore(elapsed_time, current_level, this); // will self delete
     }
 }
 
@@ -389,7 +391,7 @@ inline void Minesweeper::open_cell(QString& coordinates, int row, int col)
     open_so_far++;
 }
 
-bool Minesweeper::check_end() const noexcept
+inline bool Minesweeper::check_end() const noexcept
 { // end is when there is no cell without a mine to open    
     return open_so_far >= (size_x*size_y)-mines ? true: false;
 }

@@ -26,6 +26,6 @@ public:
     Highscore(QWidget* parent = nullptr);
     ~Highscore() = default;
     
-};
+}; // class Highscore
 
 #endif // HIGHSCORE_HEADER

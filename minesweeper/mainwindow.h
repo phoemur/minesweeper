@@ -13,6 +13,7 @@
 #include <random>
 #include "qrightclickbutton.h"
 #include "highscore.h"
+#include "save_highscore.h"
 
 struct Cell;
 
