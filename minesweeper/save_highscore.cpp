@@ -153,6 +153,6 @@ bool SaveHighscore::is_highscore()
             return true;
         }
     }
-    
+    myfile2.close();
     return false;    
 }
