@@ -198,6 +198,10 @@ void Minesweeper::revealCell(QString coordinates)
     if (nodes[row][col].is_flag) {return;}
     else if (nodes[row][col].is_mine) {
         open_all();
+        QRightClickButton* buttonPushed = qobject_cast<QRightClickButton*>(signalMapper->mapping(coordinates));
+        static QIcon mine2;
+        mine2.addPixmap(QPixmap("images/mine2.png"), QIcon::Disabled);
+        buttonPushed->setIcon(mine2);
         QString msg = "SORRY, YOU LOST!!!\nElapsed: " + QString::number(elapsed_time) +"s";
         timer->stop();
         QMessageBox::warning(this, "Ouch!", msg);
