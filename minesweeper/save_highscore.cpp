@@ -13,10 +13,16 @@ struct pair_compare {
         if (rhs.second == "-") {return true;}
         else if (lhs.second == "-") {return false;}
         else {
-            return stol(lhs.second) < stol(rhs.second);
+            return stol(lhs.second) <= stol(rhs.second);
         }
     }
 };
+
+static inline void rtrim(std::string &s) {
+    s.erase(std::find_if(s.rbegin(), s.rend(), [](int ch) {
+        return !std::isspace(ch);
+    }).base(), s.end());
+}
 
 SaveHighscore::SaveHighscore(int sc, int lv, QWidget* parent)
     : QDialog(parent), score{sc}, level{lv}
@@ -84,7 +90,7 @@ void SaveHighscore::update()
     }
     
     myfile.close();
-    
+    rtrim(result);
     std::ofstream myfile2 {filename, std::ios::out | std::ios::trunc};
     if (!myfile2.is_open()) {
         throw std::runtime_error("Could not write highscore file");
@@ -143,16 +149,20 @@ bool SaveHighscore::is_highscore()
         if (i == level) {break;}
         getline(myfile2, buffer);
     }
+    
+    bool flag = false;
     for (int i=0; i<3; ++i) {
         getline(myfile2, buffer);
         auto tokens = split_string(buffer, delimiter);
         if (tokens[0] == "-") {
-            return true;
+            flag = true;
+            break;
         }
         else if (score < stol(tokens[1])) {
-            return true;
+            flag = true;
+            break;
         }
     }
     myfile2.close();
-    return false;    
+    return flag;   
 }
