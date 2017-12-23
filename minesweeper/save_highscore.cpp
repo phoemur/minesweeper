@@ -13,7 +13,7 @@ struct pair_compare {
         if (rhs.second == "-") {return true;}
         else if (lhs.second == "-") {return false;}
         else {
-            return stol(lhs.second) <= stol(rhs.second);
+            return stol(lhs.second) < stol(rhs.second);
         }
     }
 };
