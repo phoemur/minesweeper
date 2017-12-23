@@ -13,7 +13,7 @@ struct pair_compare {
         if (rhs.second == "-") {return true;}
         else if (lhs.second == "-") {return false;}
         else {
-            return stol(lhs.second) < stol(rhs.second);
+            return stol(lhs.second) <= stol(rhs.second);
         }
     }
 };
@@ -74,13 +74,14 @@ void SaveHighscore::update()
         scores_set.insert(std::pair<std::string,std::string>(tokens[0], tokens[1]));
     }
     scores_set.insert(std::pair<std::string,std::string>(name, std::to_string(score)));
-    scores_set.erase(std::prev(scores_set.end()));
     
-    for (auto& p: scores_set) {
-        result += p.first;
+    auto it = scores_set.begin();
+    for (int i=0; i<3; ++i) {
+        result += it->first;
         result.push_back(delimiter);
-        result += p.second;
+        result += it->second;
         result += "\n";
+        ++it;
     }
     
     while (!myfile.eof()) {
@@ -158,7 +159,7 @@ bool SaveHighscore::is_highscore()
             flag = true;
             break;
         }
-        else if (score < stol(tokens[1])) {
+        else if (score <= stol(tokens[1])) {
             flag = true;
             break;
         }
