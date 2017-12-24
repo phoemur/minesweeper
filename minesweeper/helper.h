@@ -18,6 +18,7 @@ void rtrim(std::string &s);
 bool file_exists(const std::string& name);
 std::vector<std::string> split_string(const std::string& input, 
                                       const char delimiter);
+std::string xor_crypt(const std::string& input);
     
 } // namespace helper_minesweeper
 

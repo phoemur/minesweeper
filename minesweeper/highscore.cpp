@@ -36,9 +36,16 @@ QString Highscore::parse_file()
             throw std::runtime_error("Could not write to highscore file");
         }
         
+        std::string buff;
         for (int i=0; i< 9; ++i) {
-            myfile << "-" << delimiter << "-\n";
+            buff = "";
+            buff += "-";
+            buff.push_back(delimiter);
+            buff += "-";
+            buff = helper_minesweeper::xor_crypt(buff);
+            myfile << buff << "\n";
         }
+        
         myfile.close();
     }
     
@@ -47,28 +54,28 @@ QString Highscore::parse_file()
         throw std::runtime_error("Could not read highscore file");
     }
     
-    std::string buffer;
-    QString result;
+    std::string buffer, result;
     for (auto& ent: difs) {
-        result += QString::fromStdString(ent);
+        result += ent;
         result += ":\n";
         for (int i=1; i<=3; ++i) {
-            result += QString::number(i);
+            result += std::to_string(i);
             result += ". ";
             getline(myfile2, buffer);
+            buffer = helper_minesweeper::xor_crypt(buffer);
             auto tokens = helper_minesweeper::split_string(buffer, delimiter);
             if (tokens[0] == "-") {
                 result += "\n";
             }
             else {
-                result += QString::fromStdString(tokens[0]);
+                result += tokens[0];
                 result += "   : ";
-                result += QString::fromStdString(tokens[1]);
+                result += tokens[1];
                 result += "s\n";
             }
         }
         result += "\n\n";
     }
     
-    return result;
+    return QString::fromStdString(result);
 }

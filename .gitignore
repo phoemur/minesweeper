@@ -39,3 +39,4 @@ Makefile
 
 #CSV files
 *.csv
+*.dat

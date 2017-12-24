@@ -53,6 +53,7 @@ void SaveHighscore::update()
     }
     for (int i=0; i<3; ++i) {
         getline(myfile, buffer);
+        buffer = helper_minesweeper::xor_crypt(buffer);
         auto tokens = helper_minesweeper::split_string(buffer, delimiter);
         scores_set.insert(std::pair<std::string,std::string>(tokens[0], tokens[1]));
     }
@@ -60,9 +61,12 @@ void SaveHighscore::update()
     
     auto it = scores_set.begin();
     for (int i=0; i<3; ++i) {
-        result += it->first;
-        result.push_back(delimiter);
-        result += it->second;
+        buffer = "";
+        buffer += it->first;
+        buffer.push_back(delimiter);
+        buffer += it->second;
+        buffer = helper_minesweeper::xor_crypt(buffer);
+        result += buffer;
         result += "\n";
         ++it;
     }
@@ -92,9 +96,16 @@ bool SaveHighscore::is_highscore()
             throw std::runtime_error("Could not write to highscore file");
         }
         
+        std::string buff;
         for (int i=0; i< 9; ++i) {
-            myfile << "-" << delimiter << "-\n";
+            buff = "";
+            buff += "-";
+            buff.push_back(delimiter);
+            buff += "-";
+            buff = helper_minesweeper::xor_crypt(buff);
+            myfile << buff << "\n";
         }
+        
         myfile.close();
     }
     
@@ -113,6 +124,7 @@ bool SaveHighscore::is_highscore()
     bool flag = false;
     for (int i=0; i<3; ++i) {
         getline(myfile2, buffer);
+        buffer = helper_minesweeper::xor_crypt(buffer);
         auto tokens = helper_minesweeper::split_string(buffer, delimiter);
         if (tokens[0] == "-") {
             flag = true;

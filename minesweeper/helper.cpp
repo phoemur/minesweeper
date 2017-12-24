@@ -44,3 +44,16 @@ std::vector<std::string> helper_minesweeper::split_string(const std::string& inp
     
     return result;
 }
+
+std::string helper_minesweeper::xor_crypt(const std::string& input)
+{
+    static const char key = 'K';
+    
+    std::string output {input};
+    
+    for (char& c: output) {
+        c ^= key;
+    }
+    
+    return output;
+}

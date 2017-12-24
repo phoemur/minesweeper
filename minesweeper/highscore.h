@@ -15,7 +15,7 @@ class Highscore : public QDialog {
     
     QPushButton *close;
     
-    std::string filename {"highscore.csv"};
+    std::string filename {"highscore.dat"};
     
     //helper functions
     QString parse_file();

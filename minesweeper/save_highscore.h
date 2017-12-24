@@ -20,7 +20,7 @@ class SaveHighscore : public QDialog {
     int level;
     
     const char delimiter = 30;
-    std::string filename {"highscore.csv"};
+    std::string filename {"highscore.dat"};
     
     //helper functions
     bool is_highscore();
