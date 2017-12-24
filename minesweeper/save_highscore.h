@@ -24,8 +24,6 @@ class SaveHighscore : public QDialog {
     
     //helper functions
     bool is_highscore();
-    bool file_exists(const std::string& name);
-    std::vector<std::string> split_string(const std::string& input, const char delimiter);
 public:
     SaveHighscore(int sc, int lv, QWidget* parent = nullptr);
     ~SaveHighscore() = default;

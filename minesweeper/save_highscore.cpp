@@ -1,34 +1,10 @@
 #include "save_highscore.h"
+#include "helper.h"
 
 #include <fstream>
-#include <sstream>
 #include <vector>
 #include <string>
 #include <set>
-
-
-namespace helper_minesweeper {
-    
-struct pair_compare {
-    bool operator()(const std::pair<std::string,std::string>& lhs,
-                    const std::pair<std::string,std::string>& rhs)
-    {
-        if (rhs.second == "-") {return true;}
-        else if (lhs.second == "-") {return false;}
-        else {
-            return stol(lhs.second) <= stol(rhs.second);
-        }
-    }
-};
-
-inline void rtrim(std::string &s) {
-    s.erase(std::find_if(s.rbegin(), s.rend(), [](int ch) {
-        return !std::isspace(ch);
-    }).base(), s.end());
-}
-
-    
-} // namespace helper_minesweeper
 
 
 SaveHighscore::SaveHighscore(int sc, int lv, QWidget* parent)
@@ -77,7 +53,7 @@ void SaveHighscore::update()
     }
     for (int i=0; i<3; ++i) {
         getline(myfile, buffer);
-        auto tokens = split_string(buffer, delimiter);
+        auto tokens = helper_minesweeper::split_string(buffer, delimiter);
         scores_set.insert(std::pair<std::string,std::string>(tokens[0], tokens[1]));
     }
     scores_set.insert(std::pair<std::string,std::string>(name, std::to_string(score)));
@@ -108,33 +84,9 @@ void SaveHighscore::update()
     this->close();
 }
 
-inline bool SaveHighscore::file_exists(const std::string& name)
-{
-    if (FILE *file = fopen(name.c_str(), "r")) {
-        fclose(file);
-        return true;
-    } else {
-        return false;
-    }   
-}
-
-std::vector<std::string> SaveHighscore::split_string(const std::string& input, 
-                                                     const char delimiter) 
-{
-    std::stringstream ss {input};
-    std::vector<std::string> result;
-    // result.reserve(count(begin(input), end(input), delimiter));
-    
-    for (std::string buffer; 
-         getline(ss, buffer, delimiter);) 
-            {result.push_back(std::move(buffer));}
-    
-    return result;
-}
-
 bool SaveHighscore::is_highscore()
 {  
-    if (!file_exists(filename)) {
+    if (!helper_minesweeper::file_exists(filename)) {
         std::ofstream myfile {filename, std::ios::out};
         if (!myfile.is_open()) {
             throw std::runtime_error("Could not write to highscore file");
@@ -161,7 +113,7 @@ bool SaveHighscore::is_highscore()
     bool flag = false;
     for (int i=0; i<3; ++i) {
         getline(myfile2, buffer);
-        auto tokens = split_string(buffer, delimiter);
+        auto tokens = helper_minesweeper::split_string(buffer, delimiter);
         if (tokens[0] == "-") {
             flag = true;
             break;

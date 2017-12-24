@@ -1,4 +1,5 @@
 #include "highscore.h"
+#include "helper.h"
 
 #include <fstream>
 #include <sstream>
@@ -24,35 +25,12 @@ Highscore::Highscore(QWidget* parent)
     connect(close, SIGNAL(clicked()), this, SLOT(close()));
 }
 
-inline bool Highscore::file_exists(const std::string& name)
-{
-    if (FILE *file = fopen(name.c_str(), "r")) {
-        fclose(file);
-        return true;
-    } else {
-        return false;
-    }   
-}
-
-std::vector<std::string> Highscore::split_string(const std::string& input, const char delimiter) 
-{
-    std::stringstream ss {input};
-    std::vector<std::string> result;
-    // result.reserve(count(begin(input), end(input), delimiter));
-    
-    for (std::string buffer; 
-         getline(ss, buffer, delimiter);) 
-            {result.push_back(std::move(buffer));}
-    
-    return result;
-}
-
 QString Highscore::parse_file()
 {
     static const char delimiter = 30;
     static const std::vector<std::string> difs {"Beginner", "Intermediate", "Expert"};
     
-    if (!file_exists(filename)) {
+    if (!helper_minesweeper::file_exists(filename)) {
         std::ofstream myfile {filename, std::ios::out};
         if (!myfile.is_open()) {
             throw std::runtime_error("Could not write to highscore file");
@@ -78,7 +56,7 @@ QString Highscore::parse_file()
             result += QString::number(i);
             result += ". ";
             getline(myfile2, buffer);
-            auto tokens = split_string(buffer, delimiter);
+            auto tokens = helper_minesweeper::split_string(buffer, delimiter);
             if (tokens[0] == "-") {
                 result += "\n";
             }

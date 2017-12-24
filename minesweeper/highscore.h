@@ -18,8 +18,6 @@ class Highscore : public QDialog {
     std::string filename {"highscore.csv"};
     
     //helper functions
-    bool file_exists(const std::string& name);
-    std::vector<std::string> split_string(const std::string& input, const char delimiter);
     QString parse_file();
 public:
     QLabel *scores;

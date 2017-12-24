@@ -19,5 +19,5 @@ QMAKE_CXXFLAGS += -std=c++11
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
 # Input
-HEADERS += save_highscore.h highscore.h mainwindow.h qrightclickbutton.h
-SOURCES += save_highscore.cpp highscore.cpp mainwindow.cpp minesweeper.cpp qrightclickbutton.cpp
+HEADERS += helper.h save_highscore.h highscore.h mainwindow.h qrightclickbutton.h
+SOURCES += helper.cpp save_highscore.cpp highscore.cpp mainwindow.cpp minesweeper.cpp qrightclickbutton.cpp
