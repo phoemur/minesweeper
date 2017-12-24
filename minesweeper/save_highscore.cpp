@@ -6,6 +6,9 @@
 #include <string>
 #include <set>
 
+
+namespace helper_minesweeper {
+    
 struct pair_compare {
     bool operator()(const std::pair<std::string,std::string>& lhs,
                     const std::pair<std::string,std::string>& rhs)
@@ -18,11 +21,15 @@ struct pair_compare {
     }
 };
 
-static inline void rtrim(std::string &s) {
+inline void rtrim(std::string &s) {
     s.erase(std::find_if(s.rbegin(), s.rend(), [](int ch) {
         return !std::isspace(ch);
     }).base(), s.end());
 }
+
+    
+} // namespace helper_minesweeper
+
 
 SaveHighscore::SaveHighscore(int sc, int lv, QWidget* parent)
     : QDialog(parent), score{sc}, level{lv}
@@ -54,7 +61,7 @@ void SaveHighscore::update()
 {
     std::string name = namefield->text().toStdString();
     
-    std::set<std::pair<std::string,std::string>, pair_compare> scores_set;
+    std::set<std::pair<std::string,std::string>, helper_minesweeper::pair_compare> scores_set;
     
     std::ifstream myfile {filename, std::ios::in};
     if (!myfile.is_open()) {
@@ -91,7 +98,7 @@ void SaveHighscore::update()
     }
     
     myfile.close();
-    rtrim(result);
+    helper_minesweeper::rtrim(result);
     std::ofstream myfile2 {filename, std::ios::out | std::ios::trunc};
     if (!myfile2.is_open()) {
         throw std::runtime_error("Could not write highscore file");
