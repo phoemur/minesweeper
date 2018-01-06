@@ -11,8 +11,7 @@ INCLUDEPATH += .
 # depend on your compiler). Please consult the documentation of the
 # deprecated API in order to know how to port your code away from it.
 DEFINES += QT_DEPRECATED_WARNINGS
-QT += widgets
-QMAKE_CXXFLAGS += -std=c++11
+
 # You can also make your code fail to compile if you use deprecated APIs.
 # In order to do so, uncomment the following line.
 # You can also select to disable deprecated APIs only up to a certain version of Qt.
@@ -21,3 +20,9 @@ QMAKE_CXXFLAGS += -std=c++11
 # Input
 HEADERS += helper.h save_highscore.h highscore.h mainwindow.h qrightclickbutton.h
 SOURCES += helper.cpp save_highscore.cpp highscore.cpp mainwindow.cpp minesweeper.cpp qrightclickbutton.cpp
+
+# Custom configs
+QT += widgets
+QMAKE_CXXFLAGS += -std=c++11
+CONFIG += release
+QMAKE_POST_LINK=$(STRIP) $(TARGET)
