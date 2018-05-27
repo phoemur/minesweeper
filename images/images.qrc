@@ -1,0 +1,18 @@
+<RCC>
+    <qresource prefix="/icons">
+        <file>1.png</file>
+        <file>2.png</file>
+        <file>3.png</file>
+        <file>4.png</file>
+        <file>5.png</file>
+        <file>6.png</file>
+        <file>7.png</file>
+        <file>8.png</file>
+        <file>about.png</file>
+        <file>exit.gif</file>
+        <file>flag.png</file>
+        <file>mine.png</file>
+        <file>mine2.png</file>
+        <file>new.gif</file>
+    </qresource>
+</RCC>

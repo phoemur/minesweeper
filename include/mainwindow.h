@@ -66,7 +66,7 @@ class Minesweeper : public QMainWindow {
                          QWidget* parent = nullptr);
 public:
     
-    Minesweeper() : Minesweeper(8, 8, 10) {};
+    Minesweeper() : Minesweeper(8, 8, 10) {}
     ~Minesweeper() noexcept;
     
 private slots:

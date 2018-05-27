@@ -50,8 +50,8 @@ Minesweeper::Minesweeper(unsigned sz_x,
     fill_cells();
     
     // Menu File
-    QPixmap quit_pix("images/exit.gif");
-    QPixmap new_pix("images/new.gif");
+    QPixmap quit_pix(":/icons/exit.gif");
+    QPixmap new_pix(":/icons/new.gif");
     QAction *quit = new QAction(quit_pix, "&Quit", widget);
     QAction *new_game = new QAction(new_pix, "&New game", widget);
     QAction *beginner = new QAction("&Beginner", widget);
@@ -83,7 +83,7 @@ Minesweeper::Minesweeper(unsigned sz_x,
     connect(highscore, &QAction::triggered, this, &Minesweeper::show_highscore);
     
     // Menu Help
-    QPixmap about_pix("images/about.png");
+    QPixmap about_pix(":/icons/about.png");
     QAction *sobre = new QAction(about_pix, "&About", widget);
     sobre->setShortcut(tr("CTRL+H"));
     QMenu *ajuda;
@@ -125,7 +125,7 @@ Minesweeper::Minesweeper(unsigned sz_x,
     
     this->statusBar()->addPermanentWidget(&lab);
     this->statusBar()->setSizeGripEnabled(false);
-    QIcon icon (QPixmap("images/mine.png"));
+    QIcon icon (QPixmap(":/icons/mine.png"));
     this->setWindowIcon(icon);
     update_statusbar();
     
@@ -151,7 +151,7 @@ void Minesweeper::hasRightClicked(QString coordinates)
     
     
     static QIcon flag, empty;
-    flag.addPixmap(QPixmap("images/flag.png"), QIcon::Normal);
+    flag.addPixmap(QPixmap(":/icons/flag.png"), QIcon::Normal);
     empty.addPixmap(QPixmap(""), QIcon::Normal);
     
     
@@ -200,7 +200,7 @@ void Minesweeper::revealCell(QString coordinates)
         open_all();
         QRightClickButton* buttonPushed = qobject_cast<QRightClickButton*>(signalMapper->mapping(coordinates));
         static QIcon mine2;
-        mine2.addPixmap(QPixmap("images/mine2.png"), QIcon::Disabled);
+        mine2.addPixmap(QPixmap(":/icons/mine2.png"), QIcon::Disabled);
         buttonPushed->setIcon(mine2);
         QString msg = "SORRY, YOU LOST!!!\nElapsed: " + QString::number(elapsed_time) +"s";
         timer->stop();
@@ -284,15 +284,15 @@ void Minesweeper::put_icon(QRightClickButton* btn, int row, int col)
 {
     static QIcon empty, i1, i2, i3, i4, i5, i6, i7, i8, mine;
     empty.addPixmap(QPixmap(""), QIcon::Disabled);
-    i1.addPixmap(QPixmap("images/1.png"), QIcon::Disabled);
-    i2.addPixmap(QPixmap("images/2.png"), QIcon::Disabled);
-    i3.addPixmap(QPixmap("images/3.png"), QIcon::Disabled);
-    i4.addPixmap(QPixmap("images/4.png"), QIcon::Disabled);
-    i5.addPixmap(QPixmap("images/5.png"), QIcon::Disabled);
-    i6.addPixmap(QPixmap("images/6.png"), QIcon::Disabled);
-    i7.addPixmap(QPixmap("images/7.png"), QIcon::Disabled);
-    i8.addPixmap(QPixmap("images/8.png"), QIcon::Disabled);
-    mine.addPixmap(QPixmap("images/mine.png"), QIcon::Disabled);
+    i1.addPixmap(QPixmap(":/icons/1.png"), QIcon::Disabled);
+    i2.addPixmap(QPixmap(":/icons/2.png"), QIcon::Disabled);
+    i3.addPixmap(QPixmap(":/icons/3.png"), QIcon::Disabled);
+    i4.addPixmap(QPixmap(":/icons/4.png"), QIcon::Disabled);
+    i5.addPixmap(QPixmap(":/icons/5.png"), QIcon::Disabled);
+    i6.addPixmap(QPixmap(":/icons/6.png"), QIcon::Disabled);
+    i7.addPixmap(QPixmap(":/icons/7.png"), QIcon::Disabled);
+    i8.addPixmap(QPixmap(":/icons/8.png"), QIcon::Disabled);
+    mine.addPixmap(QPixmap(":/icons/mine.png"), QIcon::Disabled);
     
     if (nodes[row][col].is_mine) {
         btn->setIcon(mine);
@@ -403,7 +403,7 @@ inline bool Minesweeper::check_end() const noexcept
 void Minesweeper::break_after_end()
 {
     static QIcon flag;
-    flag.addPixmap(QPixmap("images/flag.png"), QIcon::Normal);
+    flag.addPixmap(QPixmap(":/icons/flag.png"), QIcon::Normal);
     
     for (std::size_t i=0; i<size_x; ++i) {
         for (std::size_t j=0; j<size_y; ++j) {

@@ -36,7 +36,9 @@ moc*.*
 
 #Makefile
 Makefile
+*.cmake
 
 #CSV files
 *.csv
 *.dat
+*.user
