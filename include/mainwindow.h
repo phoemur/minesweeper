@@ -3,7 +3,6 @@
 
 #include <QWidget>
 #include <QMainWindow>
-#include <QSignalMapper>
 #include <QString>
 #include <QLabel>
 #include <QGridLayout>
@@ -11,6 +10,7 @@
 #include <QTimer>
 #include <vector>
 #include <random>
+#include <utility>
 #include "qrightclickbutton.h"
 #include "highscore.h"
 #include "save_highscore.h"
@@ -34,11 +34,9 @@ class Minesweeper : public QMainWindow {
     std::uniform_int_distribution<int> dist;
     
     QWidget *widget;
-    QSignalMapper *signalMapper = nullptr;
-    QSignalMapper *signalMapper2 = nullptr;
     QLabel lab {QString("")};
     QGridLayout *grid = nullptr;
-    QVector<QRightClickButton *> btn_storage;
+    QVector<QVector<QRightClickButton *>> btn_storage;
     
     QTimer *timer = nullptr;
     
@@ -54,7 +52,6 @@ class Minesweeper : public QMainWindow {
     void breadth_first_open(int row, int col);
     void open_all();
     void open_cell(int row, int col);
-    void open_cell(QString& coordinates, int row, int col);
     bool check_end() const noexcept;
     void break_after_end();
     void update_statusbar();
@@ -70,8 +67,8 @@ public:
     ~Minesweeper() noexcept;
     
 private slots:
-    void hasRightClicked(QString);
-    void revealCell(QString);
+    void hasRightClicked(std::pair<int,int>);
+    void revealCell(std::pair<int,int>);
     void reset();
     void about() noexcept;
     void update_clock();

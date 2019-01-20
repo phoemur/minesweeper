@@ -36,6 +36,7 @@ Minesweeper::Minesweeper(unsigned sz_x,
       engine(this->seeder()),
       dist(0, (size_x*size_y)),
       widget{new QWidget()},
+      btn_storage(size_x, QVector<QRightClickButton *>(size_y, nullptr)),
       nodes{}
 {
     // Preliminay checks
@@ -140,7 +141,7 @@ Minesweeper::~Minesweeper() noexcept
     delete widget; // everything that inherits from widget will also be deleted here
 }
 
-void Minesweeper::hasRightClicked(QString coordinates)
+void Minesweeper::hasRightClicked(std::pair<int, int> coordinates)
 {
     //qDebug() << "Right clicked: " << coordinates << "\n";
     
@@ -156,14 +157,10 @@ void Minesweeper::hasRightClicked(QString coordinates)
     
     
     // Obtain its coordinates
-    QStringList results = coordinates.split(",");
-    if ( results.size() != 2) { //Ensure that we receive two coordinates
-        qFatal("Less than two numbers received");
-    }
-    int row = results.at(0).toInt();
-    int col = results.at(1).toInt();
+    int row = coordinates.first;
+    int col = coordinates.second;
     
-    QRightClickButton* buttonPushed = qobject_cast<QRightClickButton*>(signalMapper->mapping(coordinates));
+    QRightClickButton* buttonPushed = btn_storage[row][col];
     
     if (nodes[row][col].is_flag) {
         buttonPushed->setIcon(empty);
@@ -178,7 +175,7 @@ void Minesweeper::hasRightClicked(QString coordinates)
     update_statusbar();
 }
 
-void Minesweeper::revealCell(QString coordinates)
+void Minesweeper::revealCell(std::pair<int, int> coordinates)
 {
     //qDebug() << "Left clicked: " << coordinates << "\n";
     
@@ -188,17 +185,13 @@ void Minesweeper::revealCell(QString coordinates)
     }
     
     // Obtain its coordinates
-    QStringList results = coordinates.split(",");
-    if ( results.size() != 2) { //Ensure that we receive two coordinates
-        qFatal("Less than two numbers received");
-    }
-    int row = results.at(0).toInt();
-    int col = results.at(1).toInt();
+    int row = coordinates.first;
+    int col = coordinates.second;
     
     if (nodes[row][col].is_flag) {return;}
     else if (nodes[row][col].is_mine) {
         open_all();
-        QRightClickButton* buttonPushed = qobject_cast<QRightClickButton*>(signalMapper->mapping(coordinates));
+        QRightClickButton* buttonPushed = btn_storage[row][col];
         static QIcon mine2;
         mine2.addPixmap(QPixmap(":/icons/mine2.png"), QIcon::Disabled);
         buttonPushed->setIcon(mine2);
@@ -208,7 +201,7 @@ void Minesweeper::revealCell(QString coordinates)
         return;
     }
     
-    open_cell(coordinates, row, col);
+    open_cell(row, col);
     
     if (nodes[row][col].val == 0) {
         breadth_first_open(row, col);
@@ -236,12 +229,11 @@ void Minesweeper::create_nodes(unsigned x, unsigned y)
 
 void Minesweeper::insert_mines()
 { // insert n random mines in the matrix
-    int a, b;
     unsigned counter = 0;
     
     while (counter < mines) {
-        a = dist(engine) % size_x;
-        b = dist(engine) % size_y;
+        int a = dist(engine) % size_x;
+        int b = dist(engine) % size_y;
         if (!nodes[a][b].is_mine) {
             nodes[a][b].is_mine = true;
             ++counter;
@@ -380,19 +372,13 @@ void Minesweeper::open_all()
 inline void Minesweeper::open_cell(int row, int col)
 {
     if (!nodes[row][col].is_open){
-        QString coordinates = QString::number(row)+","+QString::number(col);
-        open_cell(coordinates, row, col);
+        QRightClickButton* buttonPushed = btn_storage[row][col];
+        buttonPushed->setEnabled(false);
+        buttonPushed->setDown(true);
+        put_icon(buttonPushed, row, col);
+        nodes[row][col].is_open = true;
+        open_so_far++;
     }
-}
-
-inline void Minesweeper::open_cell(QString& coordinates, int row, int col)
-{
-    QRightClickButton* buttonPushed = qobject_cast<QRightClickButton*>(signalMapper->mapping(coordinates));
-    buttonPushed->setEnabled(false);
-    buttonPushed->setDown(true);
-    put_icon(buttonPushed, row, col);
-    nodes[row][col].is_open = true;
-    open_so_far++;
 }
 
 inline bool Minesweeper::check_end() const noexcept
@@ -408,8 +394,7 @@ void Minesweeper::break_after_end()
     for (std::size_t i=0; i<size_x; ++i) {
         for (std::size_t j=0; j<size_y; ++j) {
             if (!nodes[i][j].is_open) {
-                QString coordinates = QString::number(i)+","+QString::number(j);
-                QRightClickButton* buttonPushed = qobject_cast<QRightClickButton*>(signalMapper->mapping(coordinates));  
+                QRightClickButton* buttonPushed = btn_storage[i][j];
                 
                 if (!nodes[i][j].is_flag) {
                     buttonPushed->setEnabled(false);
@@ -442,8 +427,7 @@ void Minesweeper::reset()
     
     for (std::size_t i=0; i<size_x; ++i) {
         for (std::size_t j=0; j<size_y; ++j) {
-            QString coordinates = QString::number(i)+","+QString::number(j);
-            QRightClickButton* buttonPushed = qobject_cast<QRightClickButton*>(signalMapper->mapping(coordinates));
+            QRightClickButton* buttonPushed = btn_storage[i][j];
             buttonPushed->setEnabled(true);
             buttonPushed->setDown(false);
             buttonPushed->setIcon(QIcon());
@@ -461,37 +445,19 @@ void Minesweeper::reset()
 }
 
 void Minesweeper::create_buttons()
-{
-    if (signalMapper != nullptr) {
-        delete signalMapper;
-    }
-    if (signalMapper2 != nullptr) {
-        delete signalMapper2;
-    }
-    signalMapper = new QSignalMapper(widget);
-    signalMapper2 = new QSignalMapper(widget);
-    
+{    
     for (std::size_t i=0; i<size_x; ++i) {
         for (std::size_t j=0; j<size_y; ++j) {
             QRightClickButton *btn = new QRightClickButton(widget);
+            btn_storage[i][j] = btn;
             btn->setAttribute(Qt::WA_LayoutUsesWidgetRect);
             grid->addWidget(btn, i, j);
-            QString coordinates = QString::number(i)+","+QString::number(j); //Coordinate of the button
-            //Map the coordinates to a particular MineSweeperButton
-            signalMapper->setMapping(btn, coordinates);
-            signalMapper2->setMapping(btn, coordinates);
             
             //Connections for the buttons
-            connect(btn, SIGNAL(leftClicked()), signalMapper, SLOT(map()));
-            connect(btn, SIGNAL(rightClicked()), signalMapper2, SLOT(map()));
-            
-            btn_storage.push_back(btn);
+            connect(btn, &QRightClickButton::leftClicked,  [this,i,j](){this->revealCell({i,j});});
+            connect(btn, &QRightClickButton::rightClicked, [this,i,j](){this->hasRightClicked({i,j});});
         }
     }
-    
-    //Connect the signal mapper to this class so that we can handle its clicks
-    connect(signalMapper, SIGNAL(mapped(QString)), this, SLOT(revealCell(QString))); //Left click
-    connect(signalMapper2, SIGNAL(mapped(QString)), this, SLOT(hasRightClicked(QString))); //Right click
 }
 
 void Minesweeper::set_beginner()
@@ -501,10 +467,12 @@ void Minesweeper::set_beginner()
     mines = 10;
     current_level = 0;
     
-    for (auto& b: btn_storage) {
-        delete b;
+    for (auto& row: btn_storage) {
+        for (auto& b: row){
+            delete b;
+        }
     }
-    btn_storage.clear();
+    btn_storage = QVector<QVector<QRightClickButton*>> (size_x, QVector<QRightClickButton*>(size_y, nullptr));
     
     create_buttons();
     reset();
@@ -517,10 +485,12 @@ void Minesweeper::set_intermediate()
     mines = 40;
     current_level = 3;
     
-    for (auto& b: btn_storage) {
-        delete b;
+    for (auto& row: btn_storage) {
+        for (auto& b: row){
+            delete b;
+        }
     }
-    btn_storage.clear();
+    btn_storage = QVector<QVector<QRightClickButton*>> (size_x, QVector<QRightClickButton*>(size_y, nullptr));
     
     create_buttons();
     reset();
@@ -533,10 +503,12 @@ void Minesweeper::set_expert()
     mines = 99;
     current_level = 6;
     
-    for (auto& b: btn_storage) {
-        delete b;
+    for (auto& row: btn_storage) {
+        for (auto& b: row){
+            delete b;
+        }
     }
-    btn_storage.clear();
+    btn_storage = QVector<QVector<QRightClickButton*>> (size_x, QVector<QRightClickButton*>(size_y, nullptr));
     
     create_buttons();
     reset();
