@@ -454,8 +454,8 @@ void Minesweeper::create_buttons()
             grid->addWidget(btn, i, j);
             
             //Connections for the buttons
-            connect(btn, &QRightClickButton::leftClicked,  [this,i,j](){this->revealCell({i,j});});
-            connect(btn, &QRightClickButton::rightClicked, [this,i,j](){this->hasRightClicked({i,j});});
+            connect(btn, &QRightClickButton::leftClicked,  this, [=](){this->revealCell({i,j});});
+            connect(btn, &QRightClickButton::rightClicked, this, [=](){this->hasRightClicked({i,j});});
         }
     }
 }
