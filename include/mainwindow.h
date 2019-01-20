@@ -21,17 +21,17 @@ class Minesweeper : public QMainWindow {
     
     Q_OBJECT
     
-    unsigned size_x;
-    unsigned size_y;
-    unsigned mines;
-    unsigned num_flags;
-    unsigned open_so_far;
+    std::size_t size_x;
+    std::size_t size_y;
+    std::size_t mines;
+    std::size_t num_flags;
+    std::size_t open_so_far;
     double elapsed_time;
     int current_level;
     
     std::random_device seeder {};
     std::mt19937 engine;
-    std::uniform_int_distribution<int> dist;
+    std::uniform_int_distribution<std::size_t> dist;
     
     QWidget *widget;
     QLabel lab {QString("")};
@@ -43,23 +43,23 @@ class Minesweeper : public QMainWindow {
     std::vector<std::vector<Cell>> nodes; //representation of the minefield
     
     // helper functions
-    void create_nodes(unsigned x, unsigned y);
+    void create_nodes(std::size_t x, std::size_t y);
     void insert_mines();
     bool is_valid_coord(int a, int b) const noexcept;
     void fill_cells();
     void create_buttons();
-    void put_icon(QRightClickButton* btn, int row, int cow);
-    void breadth_first_open(int row, int col);
+    void put_icon(QRightClickButton* btn, std::size_t row, std::size_t col);
+    void breadth_first_open(std::size_t row, std::size_t col);
     void open_all();
-    void open_cell(int row, int col);
+    void open_cell(std::size_t row, std::size_t col);
     bool check_end() const noexcept;
     void break_after_end();
     void update_statusbar();
     
     
-    explicit Minesweeper(unsigned sz_x, 
-                         unsigned sz_y, 
-                         unsigned mns, 
+    explicit Minesweeper(std::size_t sz_x,
+                         std::size_t sz_y,
+                         std::size_t mns,
                          QWidget* parent = nullptr);
 public:
     
@@ -67,8 +67,8 @@ public:
     ~Minesweeper() noexcept;
     
 private slots:
-    void hasRightClicked(std::pair<int,int>);
-    void revealCell(std::pair<int,int>);
+    void hasRightClicked(std::size_t row, std::size_t col);
+    void revealCell(std::size_t row, std::size_t col);
     void reset();
     void about() noexcept;
     void update_clock();

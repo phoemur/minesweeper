@@ -21,9 +21,9 @@ struct Cell { //represents one cell in the minefield
     bool is_open = false;
 };
 
-Minesweeper::Minesweeper(unsigned sz_x, 
-                         unsigned sz_y, 
-                         unsigned mns, 
+Minesweeper::Minesweeper(std::size_t sz_x,
+                         std::size_t sz_y,
+                         std::size_t mns,
                          QWidget* parent)
     : QMainWindow(parent), 
       size_x{sz_x}, 
@@ -141,7 +141,7 @@ Minesweeper::~Minesweeper() noexcept
     delete widget; // everything that inherits from widget will also be deleted here
 }
 
-void Minesweeper::hasRightClicked(std::pair<int, int> coordinates)
+void Minesweeper::hasRightClicked(std::size_t row, std::size_t col)
 {
     //qDebug() << "Right clicked: " << coordinates << "\n";
     
@@ -154,11 +154,6 @@ void Minesweeper::hasRightClicked(std::pair<int, int> coordinates)
     static QIcon flag, empty;
     flag.addPixmap(QPixmap(":/icons/flag.png"), QIcon::Normal);
     empty.addPixmap(QPixmap(""), QIcon::Normal);
-    
-    
-    // Obtain its coordinates
-    int row = coordinates.first;
-    int col = coordinates.second;
     
     QRightClickButton* buttonPushed = btn_storage[row][col];
     
@@ -175,7 +170,7 @@ void Minesweeper::hasRightClicked(std::pair<int, int> coordinates)
     update_statusbar();
 }
 
-void Minesweeper::revealCell(std::pair<int, int> coordinates)
+void Minesweeper::revealCell(std::size_t row, std::size_t col)
 {
     //qDebug() << "Left clicked: " << coordinates << "\n";
     
@@ -183,10 +178,6 @@ void Minesweeper::revealCell(std::pair<int, int> coordinates)
     if (!timer->isActive()) {
         timer->start(1000);
     }
-    
-    // Obtain its coordinates
-    int row = coordinates.first;
-    int col = coordinates.second;
     
     if (nodes[row][col].is_flag) {return;}
     else if (nodes[row][col].is_mine) {
@@ -217,12 +208,10 @@ void Minesweeper::revealCell(std::pair<int, int> coordinates)
     }
 }
 
-void Minesweeper::create_nodes(unsigned x, unsigned y)
-{ // populates the matrix with default values
-    using sz_t = std::vector<std::vector<Cell>>::size_type;
-    
+void Minesweeper::create_nodes(std::size_t x, std::size_t y)
+{ // populates the matrix with default values   
     nodes.reserve(x);
-    for (sz_t i = 0; i < x; ++i) {
+    for (std::size_t i = 0; i < x; ++i) {
         nodes.emplace_back(std::vector<Cell>(y));
     }
 }
@@ -232,8 +221,8 @@ void Minesweeper::insert_mines()
     unsigned counter = 0;
     
     while (counter < mines) {
-        int a = dist(engine) % size_x;
-        int b = dist(engine) % size_y;
+        std::size_t a = dist(engine) % size_x;
+        std::size_t b = dist(engine) % size_y;
         if (!nodes[a][b].is_mine) {
             nodes[a][b].is_mine = true;
             ++counter;
@@ -254,11 +243,11 @@ void Minesweeper::fill_cells()
 /* This function populates the cell values according to
        the neighbouring mines */
 {
-    int n = size_x;
-    int m = size_y;
+    std::size_t n = size_x;
+    std::size_t m = size_y;
     
-    for (int i=0; i<n; ++i) {
-        for (int j=0; j<m; ++j) {
+    for (std::size_t i=0; i<n; ++i) {
+        for (std::size_t j=0; j<m; ++j) {
             for (int b=-1; b<=1; ++b) {
                 for (int a=-1; a<=1; ++a) {
                     if (is_valid_coord(b+i, a+j)) {
@@ -272,7 +261,7 @@ void Minesweeper::fill_cells()
     }
 }
 
-void Minesweeper::put_icon(QRightClickButton* btn, int row, int col)
+void Minesweeper::put_icon(QRightClickButton* btn, std::size_t row, std::size_t col)
 {
     static QIcon empty, i1, i2, i3, i4, i5, i6, i7, i8, mine;
     empty.addPixmap(QPixmap(""), QIcon::Disabled);
@@ -325,15 +314,15 @@ void Minesweeper::put_icon(QRightClickButton* btn, int row, int col)
     }
 }
 
-void Minesweeper::breadth_first_open(int row, int col)
+void Minesweeper::breadth_first_open(std::size_t row, std::size_t col)
 { // open all adjacent zeroes (Breadth First Search)
     using namespace std;
     
     if (nodes[row][col].val != 0) {return;}
     
     vector<vector<bool>> visited (size_x, vector<bool>(size_y, false));
-    deque<pair<int,int>> c_queue;
-    c_queue.push_back(pair<int,int>(row,col));
+    deque<pair<std::size_t,std::size_t>> c_queue;
+    c_queue.push_back({row,col});
     visited[row][col] = true;
     
     while (!c_queue.empty()) {
@@ -350,7 +339,7 @@ void Minesweeper::breadth_first_open(int row, int col)
                     }
                     if (!visited[b+p.first][a+p.second] &&
                         nodes[b+p.first][a+p.second].val == 0) {
-                            c_queue.push_back(pair<int,int>(b+p.first, a+p.second));
+                        c_queue.push_back({b+p.first, a+p.second});
                             visited[b+p.first][a+p.second] = true;
                     }
                 }
@@ -369,7 +358,7 @@ void Minesweeper::open_all()
     }
 }
 
-inline void Minesweeper::open_cell(int row, int col)
+inline void Minesweeper::open_cell(std::size_t row, std::size_t col)
 {
     if (!nodes[row][col].is_open){
         QRightClickButton* buttonPushed = btn_storage[row][col];
@@ -454,8 +443,8 @@ void Minesweeper::create_buttons()
             grid->addWidget(btn, i, j);
             
             //Connections for the buttons
-            connect(btn, &QRightClickButton::leftClicked,  this, [=](){this->revealCell({i,j});});
-            connect(btn, &QRightClickButton::rightClicked, this, [=](){this->hasRightClicked({i,j});});
+            connect(btn, &QRightClickButton::leftClicked,  this, [=](){this->revealCell(i,j);});
+            connect(btn, &QRightClickButton::rightClicked, this, [=](){this->hasRightClicked(i,j);});
         }
     }
 }
@@ -522,7 +511,7 @@ void Minesweeper::about() noexcept
 
 void Minesweeper::update_clock()
 {
-    elapsed_time += (double)timer->interval() / 1000;
+    elapsed_time += static_cast<double>(timer->interval()) / 1000.0;
     statusBar()->showMessage("   "+QString::number(elapsed_time)+"s", 2000);
 }
 

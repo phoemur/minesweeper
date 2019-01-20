@@ -17,9 +17,6 @@ private slots:
 signals:
     void rightClicked();
     void leftClicked();
-
-public slots:
-
 };
 
 #endif // QRIGHTCLICKBUTTON_H

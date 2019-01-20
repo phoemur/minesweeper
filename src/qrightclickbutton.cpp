@@ -7,11 +7,11 @@ QRightClickButton::QRightClickButton(QWidget *parent) :
 
 void QRightClickButton::mousePressEvent(QMouseEvent *e)
 {
-    if(e->buttons()==Qt::RightButton) {
+    if(e->buttons() == Qt::RightButton) {
         emit rightClicked();
         //qDebug() << "rightclicked";
     }
-    else if(e->buttons()==Qt::LeftButton) {
+    else if(e->buttons() == Qt::LeftButton) {
         emit leftClicked();
         //qDebug() << "leftclicked";
     }
