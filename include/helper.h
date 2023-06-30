@@ -10,7 +10,7 @@ namespace helper_minesweeper {
 
 struct pair_compare {
     bool operator()(const std::pair<std::string,std::string>& lhs,
-                    const std::pair<std::string,std::string>& rhs);
+                    const std::pair<std::string,std::string>& rhs) const;
     
 };
 

@@ -6,7 +6,7 @@
 #include <algorithm>
  
 bool helper_minesweeper::pair_compare::operator()(const std::pair<std::string,std::string>& lhs,
-                                                  const std::pair<std::string,std::string>& rhs)
+                                                  const std::pair<std::string,std::string>& rhs) const
 {
     if (rhs.second == "-") {return true;}
     else if (lhs.second == "-") {return false;}
