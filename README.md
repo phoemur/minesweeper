@@ -6,9 +6,9 @@ This is an implementation of Minesweeper written in C++ and Qt
 Author: Fernando B. Giannasi
 
 # Requirements
-C++11
+C++14
 
-Qt 5
+Qt6
 
 # Instructions to compile and Run
 

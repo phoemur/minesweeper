@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 2.8.11)
+cmake_minimum_required(VERSION 3.10)
 
 project(minesweeper)
 set(CMAKE_BUILD_TYPE Release)
@@ -6,9 +6,9 @@ set(CMAKE_BUILD_TYPE Release)
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 include_directories(include)
 
-find_package(Qt5Widgets REQUIRED)
+find_package(Qt6Widgets REQUIRED)
 
-set(QT5_LIBRARIES Qt5::Widgets)
+set(QT6_LIBRARIES Qt6::Widgets)
 
 set(TARGET ${CMAKE_PROJECT_NAME})
 
@@ -16,7 +16,7 @@ set(TARGET ${CMAKE_PROJECT_NAME})
 set(RESOURCE
     ${CMAKE_CURRENT_SOURCE_DIR}/images/images.qrc
 )
-qt5_add_resources(RESOURCES_ADDED ${RESOURCE})
+qt6_add_resources(RESOURCES_ADDED ${RESOURCE})
 
 # Sources
 set(SOURCES
@@ -37,17 +37,17 @@ set(HEADERS
 )
 
 # Generate MOC
-qt5_wrap_cpp(minesweeper_SRC ${HEADERS})
+qt6_wrap_cpp(minesweeper_SRC ${HEADERS})
 
 # Add classes that doesn't need MOC
 set(HEADERS ${HEADERS} include/helper.h)
 
 # Compile / translate
 add_executable(${TARGET} ${SOURCES} ${minesweeper_SRC} ${RESOURCES_ADDED})
-target_compile_features(${TARGET} PUBLIC cxx_std_11)
+target_compile_features(${TARGET} PUBLIC cxx_std_14)
 
 # Link
-target_link_libraries(${TARGET} ${QT5_LIBRARIES})
+target_link_libraries(${TARGET} ${QT6_LIBRARIES})
 
 #Install
 install (TARGETS ${TARGET} RUNTIME DESTINATION bin)
